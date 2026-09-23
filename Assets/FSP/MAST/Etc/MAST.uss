@@ -1,0 +1,300 @@
+/* MAST editor window stylesheet (UI Toolkit).
+   Compatible with Unity 6000.0 LTS and later. */
+
+.mast-root {
+    flex-grow: 1;
+}
+
+/* ---------- Tab bar ---------- */
+
+.mast-tabbar {
+    flex-direction: row;
+    flex-shrink: 0;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 0, 0, 0.5);
+}
+
+.mast-tab {
+    flex-grow: 1;
+    -unity-text-align: middle-center;
+    padding: 4px 10px;
+    margin: 0;
+    border-radius: 0;
+    border-width: 0;
+    border-bottom-width: 2px;
+    border-bottom-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.mast-tab:hover {
+    background-color: rgba(128, 128, 128, 0.2);
+}
+
+.mast-tab--active {
+    background-color: rgba(128, 128, 128, 0.35);
+    border-bottom-color: rgb(58, 121, 187);
+}
+
+.mast-tab-content {
+    flex-grow: 1;
+}
+
+/* ---------- Tool column ---------- */
+
+.mast-tab-body {
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.mast-toolbar {
+    flex-shrink: 0;
+    padding: 4px;
+}
+
+.mast-toolbar-group {
+    margin-bottom: 6px;
+    padding: 2px;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+.mast-tool-button {
+    padding: 0;
+    margin: 1px;
+    border-width: 1px;
+    border-radius: 3px;
+    border-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(128, 128, 128, 0.15);
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.mast-tool-button:hover {
+    background-color: rgba(128, 128, 128, 0.35);
+}
+
+.mast-tool-button--active {
+    background-color: rgba(58, 121, 187, 0.6);
+    border-color: rgb(58, 121, 187);
+}
+
+.mast-tool-button--active:hover {
+    background-color: rgba(58, 121, 187, 0.75);
+}
+
+/* ---------- Settings / Tools sections ---------- */
+
+.mast-section {
+    margin: 4px;
+    padding: 6px;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.25);
+    /* Sections keep their natural height when the window is short — only
+       sections that contain a ScrollView opt back into shrinking (inline).
+       Without this, footer buttons get crushed flat. */
+    flex-shrink: 0;
+}
+
+/* Buttons inside sections never collapse below a usable height */
+.mast-section .unity-button {
+    flex-shrink: 0;
+    min-height: 20px;
+}
+
+.mast-bold-label {
+    -unity-font-style: bold;
+    margin-top: 4px;
+}
+
+.mast-wrap-label {
+    white-space: normal;
+    margin-bottom: 4px;
+}
+
+/* ---------- Input fields (dark theme) ----------
+   Default editor input backgrounds read too light against the MAST section
+   panels; darken text inputs, dropdowns, and object fields to match. */
+
+.mast-theme-dark .unity-base-text-field__input {
+    background-color: rgb(25, 25, 25);
+    border-color: rgba(0, 0, 0, 0.6);
+}
+
+.mast-theme-dark .unity-base-popup-field__input,
+.mast-theme-dark .unity-enum-field__input {
+    background-color: rgb(32, 32, 32);
+    border-color: rgba(0, 0, 0, 0.6);
+}
+
+.mast-theme-dark .unity-object-field__input {
+    background-color: rgb(32, 32, 32);
+    border-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Checkboxes — match the text input backgrounds.
+   The editor theme draws the checkbox as TEXTURES (d_toggle_bg / d_toggle_on),
+   so background-color alone cannot darken it: remove the box texture and draw
+   a flat box; the checked state restores the theme's tick image on top. */
+.mast-root.mast-theme-dark .unity-toggle #unity-checkmark,
+.mast-root.mast-theme-dark .unity-toggle:hover #unity-checkmark,
+.mast-root.mast-theme-dark .unity-toggle:focus #unity-checkmark {
+    background-image: none;
+    background-color: rgb(25, 25, 25);
+    border-width: 1px;
+    border-radius: 3px;
+    border-color: rgba(0, 0, 0, 0.6);
+}
+
+.mast-root.mast-theme-dark .unity-toggle:hover #unity-checkmark {
+    border-color: rgb(90, 90, 90);
+}
+
+.mast-root.mast-theme-dark .unity-toggle:checked #unity-checkmark,
+.mast-root.mast-theme-dark .unity-toggle:checked:hover #unity-checkmark,
+.mast-root.mast-theme-dark .unity-toggle:checked:focus #unity-checkmark {
+    background-image: resource("UIPackageResources/Images/d_toggle_on.png");
+    background-color: rgb(25, 25, 25);
+}
+
+/* Foldouts reuse Toggle internally — restore their arrow glyphs, unboxed.
+   These rules mirror every pseudo-state above and come later, so they win. */
+.mast-root.mast-theme-dark .unity-foldout__toggle #unity-checkmark,
+.mast-root.mast-theme-dark .unity-foldout__toggle:hover #unity-checkmark,
+.mast-root.mast-theme-dark .unity-foldout__toggle:focus #unity-checkmark {
+    background-image: var(--unity-icons-foldout);
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+}
+
+.mast-root.mast-theme-dark .unity-foldout__toggle:checked #unity-checkmark,
+.mast-root.mast-theme-dark .unity-foldout__toggle:checked:hover #unity-checkmark,
+.mast-root.mast-theme-dark .unity-foldout__toggle:checked:focus #unity-checkmark {
+    background-image: var(--unity-icons-foldout-checked);
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+}
+
+/* Slider track */
+.mast-theme-dark .unity-base-slider__tracker {
+    background-color: rgb(25, 25, 25);
+    border-color: rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- Palette ---------- */
+
+.mast-palette {
+    flex-grow: 1;
+    padding: 4px;
+}
+
+.mast-palette-scroll {
+    flex-grow: 1;
+}
+
+.mast-palette-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.mast-palette-item {
+    border-width: 2px;
+    border-radius: 3px;
+    border-color: rgba(0, 0, 0, 0);
+    margin: 1px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.mast-palette-item:hover {
+    border-color: rgba(128, 160, 192, 0.8);
+}
+
+.mast-palette-item--selected {
+    border-color: rgb(58, 121, 187);
+    background-color: rgba(58, 121, 187, 0.35);
+}
+
+/* Palette background preference (Settings > GUI) */
+
+.mast-palette--dark .mast-palette-scroll {
+    background-color: rgb(42, 42, 42);
+}
+
+.mast-palette-placeholder {
+    white-space: normal;
+    padding: 8px;
+    opacity: 0.8;
+}
+
+.mast-palette-slider {
+    flex-shrink: 0;
+    margin: 2px 4px;
+}
+
+.mast-palette-folder {
+    flex-shrink: 0;
+    margin: 2px 2px 4px 2px;
+}
+
+/* Folder picker button: reads like a dropdown field, left-aligned path */
+.mast-folder-button {
+    -unity-text-align: middle-left;
+    padding: 2px 8px;
+    min-height: 20px;
+}
+
+.mast-theme-dark .mast-folder-button {
+    background-color: rgb(32, 32, 32);
+    color: rgb(210, 210, 210);
+}
+
+.mast-theme-dark .mast-folder-button:hover {
+    background-color: rgb(42, 42, 42);
+}
+
+/* Folder picker popup: MAST-rendered indented folder tree — every row is
+   clickable, including parent folders */
+.mast-folder-popup {
+    background-color: rgb(240, 240, 240);
+    border-width: 1px;
+    border-color: rgb(140, 140, 140);
+    max-height: 320px;
+}
+
+.mast-theme-dark .mast-folder-popup {
+    background-color: rgb(32, 32, 32);
+    border-color: rgb(85, 85, 85);
+}
+
+.mast-folder-popup-scroll {
+    max-height: 318px;
+}
+
+.mast-folder-popup-row {
+    padding: 3px 12px 3px 6px;
+}
+
+.mast-folder-popup-row:hover {
+    background-color: rgba(58, 121, 187, 0.6);
+}
+
+.mast-theme-dark .mast-folder-popup-row {
+    color: rgb(210, 210, 210);
+}
+
+.mast-folder-popup-row--current {
+    -unity-font-style: bold;
+}
+
+/* Structural rows: folders with no items directly in them — shown so their
+   children nest under the right parent, but not selectable */
+.mast-folder-popup-row--structural {
+    color: rgb(130, 130, 130);
+}
+
+.mast-folder-popup-row--structural:hover {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.mast-theme-dark .mast-folder-popup-row--structural {
+    color: rgb(120, 120, 120);
+}
