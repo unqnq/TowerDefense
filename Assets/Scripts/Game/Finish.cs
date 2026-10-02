@@ -10,6 +10,7 @@ public class Finish : MonoBehaviour
     [SerializeField] private TMP_Text healthLabel;
     [SerializeField] private GameObject losePanel;
     [SerializeField] private int currentHealth;
+    private AudioSource audioSource;
 
     void Start()
     {
@@ -17,12 +18,14 @@ public class Finish : MonoBehaviour
         healthSlider.maxValue = maxHealth;
         losePanel.SetActive(false);
         UpdateHealthUI();
+        audioSource = GetComponent<AudioSource>();
     }
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
         if (currentHealth < 0) currentHealth = 0;
         UpdateHealthUI();
+        audioSource.Play();
         if (currentHealth == 0) Lose();
     }
     private void UpdateHealthUI()
