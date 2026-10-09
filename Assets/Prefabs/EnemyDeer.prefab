@@ -352,7 +352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   health: 15
   reward: 3
-  effect: {fileID: 100002, guid: f7efb0d9df2264096af57128df85dddb, type: 3}
+  effect: {fileID: 1536402512477763470, guid: 7a07c63efc1983e45a107d7820873683, type: 3}
 --- !u!82 &2613780134320632854
 AudioSource:
   m_ObjectHideFlags: 0

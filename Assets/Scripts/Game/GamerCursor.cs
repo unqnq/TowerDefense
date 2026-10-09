@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Cursor : MonoBehaviour
+public class GameCursor : MonoBehaviour
 {
     private Material cursorMaterial;
     [SerializeField] private Color dontSpawnColor = Color.red;

@@ -4,13 +4,13 @@ using UnityEngine.EventSystems;
 public class BuildCell : MonoBehaviour, IPointerMoveHandler, IPointerClickHandler
 {
     [SerializeField] private TurretSpawner turretSpawner;
-    [SerializeField] private Cursor cursor;
+    [SerializeField] private GameCursor cursor;
     [SerializeField] private bool isActive = true;
 
     private void Awake()
     {
         turretSpawner = FindAnyObjectByType<TurretSpawner>();
-        cursor = FindAnyObjectByType<Cursor>();
+        cursor = FindAnyObjectByType<GameCursor>();
     }
 
     public void OnPointerMove(PointerEventData eventData)

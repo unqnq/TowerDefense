@@ -2,5 +2,6 @@
   <Project Path="FSP.MAST.Scripts.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="CrazyGamesDefineManager.csproj" />
   <Project Path="FSP.MAST.Tests.csproj" />
 </Solution>

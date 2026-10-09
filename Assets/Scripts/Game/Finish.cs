@@ -8,17 +8,18 @@ public class Finish : MonoBehaviour
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private Slider healthSlider;
     [SerializeField] private TMP_Text healthLabel;
-    [SerializeField] private GameObject losePanel;
     [SerializeField] private int currentHealth;
     private AudioSource audioSource;
+    private CrazyAdsManager adsManager;
 
     void Start()
     {
         currentHealth = maxHealth;
         healthSlider.maxValue = maxHealth;
-        losePanel.SetActive(false);
         UpdateHealthUI();
         audioSource = GetComponent<AudioSource>();
+        adsManager = FindAnyObjectByType<CrazyAdsManager>();
+        adsManager.BeforeLeaving();
     }
     public void TakeDamage(int damage)
     {
@@ -35,12 +36,13 @@ public class Finish : MonoBehaviour
     }
     private void Lose()
     {
-        losePanel.SetActive(true);
         Time.timeScale = 0f;
+        adsManager.OnLose();
     }
 
     public void Restart()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("Level");
+        adsManager.BeforeLeaving();
     }
 }
