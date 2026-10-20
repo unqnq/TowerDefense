@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47a5a1916dbe426586de06a406f53abd, type: 3}
+  m_Name: BasicTower2
+  m_EditorClassIdentifier: Assembly-CSharp::TowerData
+  displayName: Basic
+  icon: {fileID: 0}
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  cost: 0
+  nextLevel: {fileID: 11400000, guid: 1783113c5fe64c1f8bc372f9911157be, type: 2}
+  prefab: {fileID: 8760551474949984447, guid: c4418bec96df73f498917687f538a2f0, type: 3}
+  bulletPrefab: {fileID: 7560486038897416997, guid: 3b2b9f1cd5ffe84419d0b738084b579a, type: 3}
+  hitEffect: {fileID: 0}
+  damage: 2
+  range: 3.2
+  shootDelay: 0.9
+  turnSpeed: 6
+  bulletSpeed: 11
+  splashRadius: 0
+  slowFactor: 1
+  slowDuration: 0

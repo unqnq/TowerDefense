@@ -6,7 +6,16 @@ public class EnemyMovement : MonoBehaviour
     private NavMeshAgent agent;
     private Finish finish;
     [SerializeField] private GameObject particle;
-    [SerializeField] private int damage;
+
+    // Урон по базі і швидкість приходять з EnemyData через Init.
+    private int damage;
+    private float baseSpeed;
+
+    // Сповільнення від крижаної вежі.
+    private float slowFactor = 1f;
+    private float slowUntil;
+
+    public bool IsSlowed => slowFactor < 1f;
 
     // Залишок шляху до бази по NavMesh. Поки шлях ще не пораховано, беремо пряму відстань.
     public float DistanceToFinish
@@ -26,6 +35,7 @@ public class EnemyMovement : MonoBehaviour
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        baseSpeed = agent.speed; // для ворога, поставленого на сцену вручну
 
         // Рухає ворога NavMeshAgent. Динамічний Rigidbody з ним конфліктує (гравітація, поштовхи),
         // тому робимо його kinematic. Тригер з базою при цьому працює як раніше.
@@ -37,10 +47,31 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    // Викликає спавнер одразу після створення: передає базу, до якої треба йти.
-    public void Init(Finish target)
+    // Викликає спавнер одразу після створення: передає базу, до якої треба йти, і параметри ворога.
+    public void Init(Finish target, EnemyData data)
     {
         finish = target;
+        damage = data.DamageToBase;
+        baseSpeed = data.Speed;
+        agent.speed = baseSpeed * slowFactor;
+    }
+
+    // Сповільнення не складається: діє найсильніше, а тривалість продовжується.
+    // Так кілька крижаних веж не зупинять ворога повністю.
+    public void ApplySlow(float factor, float duration)
+    {
+        if (!IsSlowed || factor < slowFactor) slowFactor = factor;
+        slowUntil = Mathf.Max(slowUntil, Time.time + duration);
+        agent.speed = baseSpeed * slowFactor;
+    }
+
+    private void Update()
+    {
+        if (IsSlowed && Time.time >= slowUntil)
+        {
+            slowFactor = 1f;
+            agent.speed = baseSpeed;
+        }
     }
 
     private void Start()

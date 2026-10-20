@@ -8,15 +8,17 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private static readonly List<EnemyHealth> alive = new List<EnemyHealth>();
     public static IReadOnlyList<EnemyHealth> Alive => alive;
 
-    [SerializeField] private int health = 3;
-    [SerializeField] private int reward = 3;
+    // Префаб відповідає лише за вигляд і звук. HP і нагорода приходять з EnemyData через Init.
     [SerializeField] private GameObject effect;
     [Tooltip("Скільки секунд тіло ворога ще лишається на сцені після смерті (щоб дограв звук).")]
     [SerializeField] private float destroyDelay = 0.6f;
 
+    private int health = 1;
+    private int reward;
     private AudioSource audioSource;
     private EnemyMovement movement;
 
+    public EnemyData Data { get; private set; }
     public bool IsDead { get; private set; }
 
     // Скільки ворогу лишилося йти до бази (для вибору цілі вежею).
@@ -26,6 +28,20 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         audioSource = GetComponent<AudioSource>();
         movement = GetComponent<EnemyMovement>();
+    }
+
+    // Викликає спавнер одразу після створення ворога.
+    public void Init(EnemyData data)
+    {
+        Data = data;
+        health = data.Health;
+        reward = data.Reward;
+    }
+
+    private void Start()
+    {
+        if (Data == null)
+            Debug.LogWarning("[EnemyHealth] Ворог створений без EnemyData (не через спавнер), HP = 1.", this);
     }
 
     private void OnEnable()

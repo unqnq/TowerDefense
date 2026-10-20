@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4f95ed5df4e477db5f280db0e1c1189, type: 3}
+  m_Name: Cat
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  displayName: Cat
+  prefab: {fileID: 5863114966442768005, guid: 66ec248e73cc284469eee7830811cedb, type: 3}
+  health: 9
+  reward: 2
+  damageToBase: 10
+  speed: 5

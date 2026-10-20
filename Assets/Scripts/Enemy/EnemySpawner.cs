@@ -1,16 +1,17 @@
 using System.Collections;
 using UnityEngine;
 
+// Випускає ворогів за описом рівня (LevelData): хвилі, групи в хвилях, інтервали.
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject[] enemies;
+    [Tooltip("Опис хвиль цього рівня.")]
+    [SerializeField] private LevelData level;
     [Tooltip("База, до якої йтимуть вороги.")]
     [SerializeField] private Finish finish;
 
-    [Header("Налаштування хвиль")]
-    [SerializeField, Min(1)] private int enemiesPerWave = 5;
-    [SerializeField, Min(0f)] private float spawnInterval = 1f;
-    [SerializeField, Min(0f)] private float timeBetweenWaves = 5f;
+    // Для майбутнього лічильника хвиль в інтерфейсі і кнопки "Наступна хвиля".
+    public int CurrentWave { get; private set; }
+    public int WaveCount => level != null ? level.Waves.Count : 0;
 
     private void Start()
     {
@@ -19,9 +20,9 @@ public class EnemySpawner : MonoBehaviour
 
     private IEnumerator SpawnWaves()
     {
-        if (enemies == null || enemies.Length == 0)
+        if (level == null || level.Waves.Count == 0)
         {
-            Debug.LogWarning("У масив Enemy Prefabs не додано ворогів!", this);
+            Debug.LogWarning("[EnemySpawner] Не призначено Level або в ньому немає хвиль.", this);
             yield break;
         }
         if (finish == null)
@@ -30,31 +31,41 @@ public class EnemySpawner : MonoBehaviour
             yield break;
         }
 
-        for (int waveIndex = 0; waveIndex < enemies.Length; waveIndex++)
+        for (int waveIndex = 0; waveIndex < level.Waves.Count; waveIndex++)
         {
-            GameObject enemyPrefab = enemies[waveIndex];
+            CurrentWave = waveIndex + 1;
+            Wave wave = level.Waves[waveIndex];
 
-            if (enemyPrefab == null)
+            foreach (SpawnGroup group in wave.groups)
             {
-                continue;
+                if (group.enemy == null || group.enemy.Prefab == null)
+                {
+                    Debug.LogWarning($"[EnemySpawner] Хвиля {CurrentWave}: група без ворога або без префаба, пропускаю.", this);
+                    continue;
+                }
+
+                for (int i = 0; i < group.count; i++)
+                {
+                    Spawn(group.enemy);
+                    yield return new WaitForSeconds(group.spawnInterval);
+                }
             }
 
-            for (int i = 0; i < enemiesPerWave; i++)
-            {
-                GameObject enemy = Instantiate(enemyPrefab, transform.position, transform.rotation);
-                if (enemy.TryGetComponent(out EnemyMovement movement))
-                    movement.Init(finish);
-
-                yield return new WaitForSeconds(spawnInterval);
-            }
-
-            if (waveIndex < enemies.Length - 1)
-            {
-                yield return new WaitForSeconds(timeBetweenWaves);
-            }
+            if (waveIndex < level.Waves.Count - 1)
+                yield return new WaitForSeconds(wave.delayAfter);
         }
 
         // Усі вороги випущені. Перемогу зарахує GameManager, коли помре останній.
         GameEvents.RaiseAllWavesSpawned();
+    }
+
+    private void Spawn(EnemyData data)
+    {
+        GameObject enemy = Instantiate(data.Prefab, transform.position, transform.rotation);
+
+        if (enemy.TryGetComponent(out EnemyHealth health))
+            health.Init(data);
+        if (enemy.TryGetComponent(out EnemyMovement movement))
+            movement.Init(finish, data);
     }
 }

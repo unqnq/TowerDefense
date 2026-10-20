@@ -20692,6 +20692,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1840092802}
   - component: {fileID: 1840092801}
+  - component: {fileID: 1840092803}
   m_Layer: 0
   m_Name: TurretSpawner
   m_TagString: Untagged
@@ -20711,10 +20712,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f265b0c0700ecc49a8cd84cc6a56eb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TurretSpawner
-  turretPref: {fileID: 8760551474949984447, guid: c4418bec96df73f498917687f538a2f0, type: 3}
+  towers:
+  - {fileID: 11400000, guid: ba6eb42778724212bb97214b00f9e92f, type: 2}
+  - {fileID: 11400000, guid: 3243903871264d928aea1741f913c732, type: 2}
+  - {fileID: 11400000, guid: ccede9b11ea1421dba3eabe4332eed7e, type: 2}
   turrets: {fileID: 234360933}
   bank: {fileID: 590172249}
-  cost: 5
+--- !u!114 &1840092803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1840092800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4824fea2af54590acb2889a69f3011d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildMenu
+  spawner: {fileID: 1840092801}
+  bank: {fileID: 590172249}
 --- !u!4 &1840092802
 Transform:
   m_ObjectHideFlags: 0
@@ -22590,16 +22607,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a4cecac5735bf145a845e7593c31d1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
-  enemies:
-  - {fileID: 1392835944688100817, guid: 243542b4bc42afe48a42068924b38df8, type: 3}
-  - {fileID: 5863114966442768005, guid: 66ec248e73cc284469eee7830811cedb, type: 3}
-  - {fileID: 7976822674063307496, guid: e0e6e905f39e86244aee7f6482078a73, type: 3}
-  - {fileID: 1289015151237066441, guid: 4852f5f41a6f49742871da69b9e7c6ee, type: 3}
-  - {fileID: 4916590918653987980, guid: 2b340b0650b10254080d186b2c922517, type: 3}
+  level: {fileID: 11400000, guid: cefc08468d2b448d9490f35e24e08ac0, type: 2}
   finish: {fileID: 1826237018}
-  enemiesPerWave: 5
-  spawnInterval: 1
-  timeBetweenWaves: 5
 --- !u!1001 &2091136012
 PrefabInstance:
   m_ObjectHideFlags: 0
