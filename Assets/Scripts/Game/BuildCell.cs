@@ -142,7 +142,11 @@ public class BuildCell : MonoBehaviour,
     private void ReceiveMerge(Turret source)
     {
         Turret merged = turretSpawner.Merge(source, PlacedTurret);
-        if (merged != null) PlacedTurret = merged; // при зміні моделі це вже новий об'єкт
+        if (merged != null)
+        {
+            PlacedTurret = merged; // при зміні моделі це вже новий об'єкт
+            Haptics.Medium();
+        }
         UpdateCursor();
     }
 
@@ -177,6 +181,7 @@ public class BuildCell : MonoBehaviour,
         PlacedTurret = turret;
         isActive = false;
         UpdateCursor(); // курсор одразу червоніє
+        Haptics.Light();
         return true;
     }
 
@@ -186,6 +191,7 @@ public class BuildCell : MonoBehaviour,
 
         turretSpawner.Sell(PlacedTurret);
         ClearCell();
+        Haptics.Light();
         UpdateCursor();
     }
 

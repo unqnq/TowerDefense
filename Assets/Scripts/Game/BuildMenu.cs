@@ -192,21 +192,8 @@ public class BuildMenu : MonoBehaviour
     private void BuildUI()
     {
         // Власний Canvas, щоб меню не залежало від розмітки основного UI.
-        var canvasObject = new GameObject("BuildMenuCanvas",
-            typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-        canvasObject.transform.SetParent(transform, false);
-
-        Canvas canvas = canvasObject.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 10; // над ігровим полем; панелі перемоги/поразки закривають меню через подію
-
-        CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1080f, 1920f);
-        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-        scaler.matchWidthOrHeight = 0.5f; // однаковий вигляд і в портретній, і в альбомній орієнтації
-
-        canvasRect = canvasObject.GetComponent<RectTransform>();
+        // Над ігровим полем і HUD; панелі перемоги/поразки/паузи закривають меню через подію.
+        canvasRect = UiFactory.CreateCanvas("BuildMenuCanvas", transform, 10);
 
         root = CreateRect("Root", canvasRect).gameObject;
         Stretch((RectTransform)root.transform);
@@ -313,45 +300,15 @@ public class BuildMenu : MonoBehaviour
     private Button CreateButton(string name, RectTransform parent, Vector2 position, UnityAction onClick,
                                 out Image image, out TMP_Text text)
     {
-        RectTransform rect = CreateRect(name, parent);
-        rect.sizeDelta = buttonSize;
-        rect.anchoredPosition = position;
-
-        image = rect.gameObject.AddComponent<Image>();
-        image.color = buttonColor;
-        Button button = rect.gameObject.AddComponent<Button>();
-        button.targetGraphic = image;
-        button.onClick.AddListener(onClick);
-
-        RectTransform textRect = CreateRect("Label", rect);
-        Stretch(textRect);
-        text = CreateText(textRect);
+        Button button = UiFactory.CreateButton(name, parent, buttonSize, buttonColor, onClick,
+                                               font, 36f, out image, out text);
+        ((RectTransform)button.transform).anchoredPosition = position;
         return button;
     }
 
-    private TMP_Text CreateText(RectTransform rect)
-    {
-        TextMeshProUGUI text = rect.gameObject.AddComponent<TextMeshProUGUI>();
-        if (font != null) text.font = font;
-        text.alignment = TextAlignmentOptions.Center;
-        text.fontSize = 36f;
-        text.color = Color.white;
-        text.raycastTarget = false;
-        return text;
-    }
+    private TMP_Text CreateText(RectTransform rect) => UiFactory.CreateText(rect, font, 36f);
 
-    private static RectTransform CreateRect(string name, Transform parent)
-    {
-        var go = new GameObject(name, typeof(RectTransform));
-        var rect = (RectTransform)go.transform;
-        rect.SetParent(parent, false);
-        return rect;
-    }
+    private static RectTransform CreateRect(string name, Transform parent) => UiFactory.CreateRect(name, parent);
 
-    private static void Stretch(RectTransform rect)
-    {
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = rect.offsetMax = Vector2.zero;
-    }
+    private static void Stretch(RectTransform rect) => UiFactory.Stretch(rect);
 }

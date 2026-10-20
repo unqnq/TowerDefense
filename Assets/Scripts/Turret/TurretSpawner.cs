@@ -51,6 +51,7 @@ public class TurretSpawner : MonoBehaviour
         TowerData next = target.Data.NextLevel;
         int spent = source.TotalSpent + target.TotalSpent;
         int level = target.Level + 1;
+        Vector3 oldScale = target.transform.localScale; // з цього розміру вежа "виросте"
         Destroy(source.gameObject);
 
         Turret merged;
@@ -67,7 +68,7 @@ public class TurretSpawner : MonoBehaviour
             Destroy(target.gameObject);
         }
 
-        if (merged != null) merged.PlayMergePop();
+        if (merged != null) merged.PlayMergePop(oldScale);
         return merged;
     }
 

@@ -30,6 +30,7 @@ public class Finish : MonoBehaviour, IDamageable
         if (currentHealth < 0) currentHealth = 0;
         UpdateHealthUI();
         if (audioSource != null) audioSource.Play();
+        Haptics.Heavy();
 
         if (IsDead) GameEvents.RaiseBaseDestroyed();
     }

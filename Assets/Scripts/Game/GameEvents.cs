@@ -14,11 +14,15 @@ public static class GameEvents
     // Спавнер випустив останнього ворога останньої хвилі.
     public static event Action AllWavesSpawned;
 
+    // Почалася хвиля. Параметри: номер хвилі (з 1) і скільки всього хвиль.
+    public static event Action<int, int> WaveStarted;
+
     // Змінився стан гри (Playing / Paused / Won / Lost).
     public static event Action<GameState> StateChanged;
 
     public static void RaiseEnemyKilled(int reward) => EnemyKilled?.Invoke(reward);
     public static void RaiseBaseDestroyed() => BaseDestroyed?.Invoke();
     public static void RaiseAllWavesSpawned() => AllWavesSpawned?.Invoke();
+    public static void RaiseWaveStarted(int wave, int total) => WaveStarted?.Invoke(wave, total);
     public static void RaiseStateChanged(GameState state) => StateChanged?.Invoke(state);
 }

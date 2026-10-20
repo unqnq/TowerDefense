@@ -9,7 +9,7 @@ public enum GameState
     Lost
 }
 
-// Єдине місце, яке керує станом гри: перемога, поразка, пауза, рестарт і Time.timeScale.
+// Єдине місце, яке керує станом гри: перемога, поразка, пауза, швидкість x2, рестарт і Time.timeScale.
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject losePanel;
@@ -17,13 +17,21 @@ public class GameManager : MonoBehaviour
     [Tooltip("Необов'язково. Якщо вказано, перед панеллю поразки показується реклама.")]
     [SerializeField] private AdsManager adsManager;
 
+    [Tooltip("Множник швидкості для кнопки x2.")]
+    [SerializeField, Min(1f)] private float fastSpeed = 2f;
+
+    // Вибір x1/x2 зберігається між рівнями і запусками: хто любить грати швидко, не вмикає щоразу.
+    private const string FastSpeedKey = "GameSpeedFast";
+
     public GameState State { get; private set; } = GameState.Playing;
+    public bool IsFast { get; private set; }
 
     private bool allWavesSpawned;
 
     private void Awake()
     {
-        Time.timeScale = 1f;
+        IsFast = PlayerPrefs.GetInt(FastSpeedKey, 0) == 1;
+        ApplyTimeScale();
         if (losePanel != null) losePanel.SetActive(false);
         if (winPanel != null) winPanel.SetActive(false);
 
@@ -58,6 +66,7 @@ public class GameManager : MonoBehaviour
     private void Win()
     {
         if (!SetState(GameState.Won)) return;
+        Haptics.Medium();
         Time.timeScale = 0f;
         if (winPanel != null) winPanel.SetActive(true);
     }
@@ -78,20 +87,54 @@ public class GameManager : MonoBehaviour
         if (losePanel != null) losePanel.SetActive(true);
     }
 
-    // Для майбутньої кнопки паузи.
     public void Pause()
     {
         if (State != GameState.Playing) return;
         SetState(GameState.Paused);
-        Time.timeScale = 0f;
+        ApplyTimeScale();
     }
 
     public void Resume()
     {
         if (State != GameState.Paused) return;
         SetState(GameState.Playing);
-        Time.timeScale = 1f;
+        ApplyTimeScale();
     }
+
+    public void TogglePause()
+    {
+        if (State == GameState.Playing) Pause();
+        else Resume();
+    }
+
+    public void ToggleSpeed()
+    {
+        IsFast = !IsFast;
+        PlayerPrefs.SetInt(FastSpeedKey, IsFast ? 1 : 0);
+        ApplyTimeScale();
+    }
+
+    // Час іде лише під час гри; на паузі, перемозі й поразці стоїть.
+    private void ApplyTimeScale()
+    {
+        Time.timeScale = State == GameState.Playing ? (IsFast ? fastSpeed : 1f) : 0f;
+    }
+
+    // Автопауза: гравець згорнув гру (дзвінок, повідомлення, кнопка "додому").
+    // Повертаючись, він бачить паузу, а не базу, яку вже розібрали вороги.
+    private void OnApplicationPause(bool paused)
+    {
+        if (paused) Pause();
+    }
+
+#if !UNITY_EDITOR
+    // На Android фокус губиться ще й коли гравець витягує шторку сповіщень.
+    // У редакторі вимкнено, інакше гра ставала б на паузу від кожного кліку в інше вікно.
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (!hasFocus) Pause();
+    }
+#endif
 
     // Кнопки Restart на панелях перемоги і поразки.
     public void Restart()

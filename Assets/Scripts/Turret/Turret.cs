@@ -22,24 +22,35 @@ public class Turret : MonoBehaviour
         if (firePoint == null) Debug.LogError("[Turret] Не призначено Fire Point.", this);
     }
 
-    // Коротке "надування" після merge, щоб гравець побачив, що вежа покращилась.
-    public void PlayMergePop()
+    // Розмір для поточного рівня: масштаб префаба × множник з TowerData.
+    private Vector3 TargetScale => originalScale * (Data != null ? Data.Scale : 1f);
+
+    // Після merge вежа "виростає" з попереднього розміру до нового з легким перескоком,
+    // щоб гравець побачив, що вежа покращилась.
+    public void PlayMergePop(Vector3 fromScale)
     {
         StopAllCoroutines();
-        StartCoroutine(MergePop());
+        StartCoroutine(MergePop(fromScale));
     }
 
-    private System.Collections.IEnumerator MergePop()
+    private System.Collections.IEnumerator MergePop(Vector3 fromScale)
     {
-        const float duration = 0.25f;
-        Vector3 baseScale = originalScale;
+        const float duration = 0.35f;
+        Vector3 toScale = TargetScale;
         for (float t = 0f; t < duration; t += Time.deltaTime)
         {
-            float k = 1f + 0.35f * Mathf.Sin(t / duration * Mathf.PI);
-            transform.localScale = baseScale * k;
+            transform.localScale = Vector3.LerpUnclamped(fromScale, toScale, EaseOutBack(t / duration));
             yield return null;
         }
-        transform.localScale = baseScale;
+        transform.localScale = toScale;
+    }
+
+    // Крива з перескоком: розмір трохи проскакує ціль і повертається.
+    private static float EaseOutBack(float x)
+    {
+        const float c1 = 1.70158f;
+        const float c3 = c1 + 1f;
+        return 1f + c3 * Mathf.Pow(x - 1f, 3f) + c1 * Mathf.Pow(x - 1f, 2f);
     }
 
     // Викликає TurretSpawner після створення вежі і після merge.
@@ -49,6 +60,7 @@ public class Turret : MonoBehaviour
         TotalSpent = totalSpent;
         Level = level;
         Tint.Apply(gameObject, data.Tint);
+        transform.localScale = TargetScale;
 
         if (data.BulletPrefab == null)
             Debug.LogError($"[Turret] У TowerData '{data.name}' не призначено Bullet Prefab.", data);

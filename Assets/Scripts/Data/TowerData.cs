@@ -14,6 +14,8 @@ public class TowerData : ScriptableObject
     [SerializeField] private Sprite icon;
     [Tooltip("Колір моделі і кулі. Білий = без змін. Тимчасовий спосіб відрізнити вежі, поки немає окремих моделей.")]
     [SerializeField] private Color tint = Color.white;
+    [Tooltip("Множник розміру моделі відносно префаба. Вищі рівні більші, щоб прокачку було видно.")]
+    [SerializeField, Min(0.1f)] private float scale = 1f;
 
     [Header("Ціна")]
     [Tooltip("Ціна будівництва. Важлива лише для першого рівня: наступні рівні отримуються через merge двох однакових веж.")]
@@ -48,6 +50,7 @@ public class TowerData : ScriptableObject
     public string DisplayName => displayName;
     public Sprite Icon => icon;
     public Color Tint => tint;
+    public float Scale => scale;
     public int Cost => cost;
     public TowerData NextLevel => nextLevel;
     public GameObject Prefab => prefab;

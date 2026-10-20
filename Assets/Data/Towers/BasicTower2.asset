@@ -15,6 +15,7 @@ MonoBehaviour:
   displayName: Basic
   icon: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
+  scale: 0.95
   cost: 0
   nextLevel: {fileID: 11400000, guid: 1783113c5fe64c1f8bc372f9911157be, type: 2}
   prefab: {fileID: 8760551474949984447, guid: c4418bec96df73f498917687f538a2f0, type: 3}

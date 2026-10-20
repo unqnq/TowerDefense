@@ -15,6 +15,7 @@ MonoBehaviour:
   displayName: Frost
   icon: {fileID: 0}
   tint: {r: 0.45, g: 0.8, b: 1, a: 1}
+  scale: 0.75
   cost: 8
   nextLevel: {fileID: 11400000, guid: 87aceaed36bd47438d9a665f10806582, type: 2}
   prefab: {fileID: 8760551474949984447, guid: c4418bec96df73f498917687f538a2f0, type: 3}
