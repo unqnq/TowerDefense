@@ -26,7 +26,15 @@ public class BuildCell : MonoBehaviour, IPointerMoveHandler, IPointerClickHandle
     public void OnPointerClick(PointerEventData eventData)
     {
         UpdateCursor();
-        turretSpawner.Spawn(transform.position);
-        isActive = false;
+
+        // На зайнятій клітинці нічого не будуємо.
+        if (!isActive) return;
+
+        // Клітинка стає зайнятою лише тоді, коли вежу справді поставили (вистачило грошей).
+        if (turretSpawner.Spawn(transform.position))
+        {
+            isActive = false;
+            UpdateCursor(); // курсор одразу червоніє
+        }
     }
 }

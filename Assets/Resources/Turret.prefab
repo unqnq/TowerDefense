@@ -119,6 +119,7 @@ MonoBehaviour:
   range: 3
   turnSpeed: 5
   shootDelay: 1
+  firePoint: {fileID: 1874980717470945587}
   bulletPrefab: {fileID: 7560486038897416997, guid: 3b2b9f1cd5ffe84419d0b738084b579a, type: 3}
 --- !u!1001 &2847496684111059023
 PrefabInstance:

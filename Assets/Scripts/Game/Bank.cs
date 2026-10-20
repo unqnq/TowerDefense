@@ -3,21 +3,24 @@ using UnityEngine;
 
 public class Bank : MonoBehaviour
 {
-    public static Bank instance;
-    [SerializeField] private int money;
+    [Tooltip("Скільки грошей у гравця на початку рівня.")]
+    [SerializeField] private int startMoney = 15;
     [SerializeField] private TMP_Text moneyText;
+
+    private int money;
+    public int Money => money;
 
     void Awake()
     {
-        if(instance == null)
-        {
-            instance = this;
-        }
-
-        money = 15;
-        moneyText = GameObject.Find("MoneyText").GetComponent<TMP_Text>();
+        money = startMoney;
+        if (moneyText == null)
+            Debug.LogError("[Bank] Не призначено Money Text в інспекторі.", this);
         UpdateUI();
     }
+
+    // Банк сам слухає, коли вбивають ворога. Ворогу не потрібно знати про банк.
+    void OnEnable() => GameEvents.EnemyKilled += AddMoney;
+    void OnDisable() => GameEvents.EnemyKilled -= AddMoney;
 
     public void AddMoney(int amount)
     {
@@ -25,20 +28,20 @@ public class Bank : MonoBehaviour
         UpdateUI();
     }
 
+    public bool CanAfford(int amount) => money >= amount;
+
+    // Списує гроші, якщо їх вистачає. Повертає true, якщо покупка відбулася.
     public bool TrySpendMoney(int amount)
     {
-        if (money - amount >= 0) return true;
-        return false;
-    }
+        if (!CanAfford(amount)) return false;
 
-    public void SpendMoney(int amount)
-    {
         money -= amount;
         UpdateUI();
+        return true;
     }
 
     void UpdateUI()
     {
-        moneyText.text = money.ToString();
+        if (moneyText != null) moneyText.text = money.ToString();
     }
 }

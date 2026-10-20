@@ -4,6 +4,8 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private GameObject[] enemies;
+    [Tooltip("База, до якої йтимуть вороги.")]
+    [SerializeField] private Finish finish;
 
     [Header("Налаштування хвиль")]
     [SerializeField, Min(1)] private int enemiesPerWave = 5;
@@ -22,7 +24,11 @@ public class EnemySpawner : MonoBehaviour
             Debug.LogWarning("У масив Enemy Prefabs не додано ворогів!", this);
             yield break;
         }
-
+        if (finish == null)
+        {
+            Debug.LogError("[EnemySpawner] Не призначено Finish.", this);
+            yield break;
+        }
 
         for (int waveIndex = 0; waveIndex < enemies.Length; waveIndex++)
         {
@@ -35,11 +41,9 @@ public class EnemySpawner : MonoBehaviour
 
             for (int i = 0; i < enemiesPerWave; i++)
             {
-                Instantiate(
-                    enemyPrefab,
-                    transform.position,
-                    transform.rotation
-                );
+                GameObject enemy = Instantiate(enemyPrefab, transform.position, transform.rotation);
+                if (enemy.TryGetComponent(out EnemyMovement movement))
+                    movement.Init(finish);
 
                 yield return new WaitForSeconds(spawnInterval);
             }
@@ -49,5 +53,8 @@ public class EnemySpawner : MonoBehaviour
                 yield return new WaitForSeconds(timeBetweenWaves);
             }
         }
+
+        // Усі вороги випущені. Перемогу зарахує GameManager, коли помре останній.
+        GameEvents.RaiseAllWavesSpawned();
     }
 }

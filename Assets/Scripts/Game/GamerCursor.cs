@@ -14,15 +14,8 @@ public class GameCursor : MonoBehaviour
 
     public void MoveTo(Vector3 buildPosition, bool canBuild)
     {
-        if (canBuild)
-        {
-            transform.position = new Vector3(buildPosition.x, 1.8f, buildPosition.z);
-            cursorMaterial.color = validColor;
-        }
-        else
-        {
-            cursorMaterial.color = dontSpawnColor;
-        }
+        // Курсор завжди переїжджає на клітинку під вказівником, а колір показує, чи можна там будувати.
+        transform.position = new Vector3(buildPosition.x, 1.8f, buildPosition.z);
+        cursorMaterial.color = canBuild ? validColor : dontSpawnColor;
     }
-
 }

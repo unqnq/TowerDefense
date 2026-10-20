@@ -3,22 +3,23 @@ using UnityEngine;
 public class TurretSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject turretPref;
+    [Tooltip("Куди складати створені вежі в ієрархії.")]
     [SerializeField] private Transform turrets;
+    [SerializeField] private Bank bank;
     [SerializeField] private int cost = 5;
 
     void Awake()
     {
-        turretPref = Resources.Load<GameObject>("Turret");
-        turrets = GameObject.Find("Level").transform;
+        if (turretPref == null) Debug.LogError("[TurretSpawner] Не призначено Turret Pref.", this);
+        if (bank == null) Debug.LogError("[TurretSpawner] Не призначено Bank.", this);
     }
 
-    public void Spawn(Vector3 place)
+    // Повертає true, якщо вежу поставлено (грошей вистачило).
+    public bool Spawn(Vector3 place)
     {
-        if (Bank.instance.TrySpendMoney(cost))
-        {
-            GameObject temp = Instantiate(turretPref, place, Quaternion.identity);
-            temp.transform.SetParent(turrets);
-            Bank.instance.SpendMoney(cost);
-        }
+        if (!bank.TrySpendMoney(cost)) return false;
+
+        Instantiate(turretPref, place, Quaternion.identity, turrets);
+        return true;
     }
 }
