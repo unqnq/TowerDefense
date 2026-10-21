@@ -72,3 +72,10 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Ключі реклами LevelPlay — не публікуються (див. Assets/Scripts/Ads/AdsKeys.cs)
+/Assets/Resources/AdsKeys.asset
+/Assets/Resources/AdsKeys.asset.meta
+
+# Службовий файл рішення редактора коду
+*.slnx

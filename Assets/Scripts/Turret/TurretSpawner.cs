@@ -12,7 +12,10 @@ public class TurretSpawner : MonoBehaviour
     [Tooltip("Яку частку вкладених грошей (усі вежі, що злилися в цю) повертає продаж.")]
     [SerializeField, Range(0f, 1f)] private float sellRefund = 0.7f;
 
-    public IReadOnlyList<TowerData> Towers => towers;
+    // Вежі, доступні саме на цьому рівні (рівень або щоденне випробування можуть обмежити список).
+    // Рахується при першому зверненні, тож не залежить від порядку Awake різних скриптів.
+    private List<TowerData> available;
+    public IReadOnlyList<TowerData> Towers => available ??= LevelSession.FilterTowers(towers ?? new TowerData[0]);
 
     void Awake()
     {

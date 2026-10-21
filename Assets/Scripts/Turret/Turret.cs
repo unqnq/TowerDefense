@@ -11,6 +11,9 @@ public class Turret : MonoBehaviour
     private Vector3 originalScale;
 
     public TowerData Data { get; private set; }
+
+    // Дальність з урахуванням покращень і бустерів (для пошуку цілі та індикатора радіусу).
+    public float Range => Data != null ? Data.Range * GameModifiers.TowerRange : 0f;
     public int Level { get; private set; } = 1;
 
     // Скільки гравець загалом заплатив за вежу (усі вежі, які злилися в цю). Від цього рахується ціна продажу.
@@ -89,15 +92,16 @@ public class Turret : MonoBehaviour
         if (timer <= 0f)
         {
             Bullet bullet = Bullet.Spawn(Data.BulletPrefab, firePoint.position, firePoint.rotation);
-            bullet.Launch(enemy, Data);
-            timer = Data.ShootDelay;
+            bullet.Launch(enemy, Data, Data.Damage * GameModifiers.TowerDamage);
+            timer = Data.ShootDelay / GameModifiers.FireRate;
         }
     }
 
     // Серед ворогів у радіусі обираємо того, кому найменше лишилося до бази.
     private EnemyHealth FindTarget()
     {
-        float rangeSqr = Data.Range * Data.Range;
+        float range = Range;
+        float rangeSqr = range * range;
         EnemyHealth best = null;
         float bestDistance = float.MaxValue;
 

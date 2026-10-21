@@ -17,6 +17,9 @@ public static class GameEvents
     // Почалася хвиля. Параметри: номер хвилі (з 1) і скільки всього хвиль.
     public static event Action<int, int> WaveStarted;
 
+    // Рівень завершено: true — перемога, false — поразка (база знищена).
+    public static event Action<bool> LevelFinished;
+
     // Змінився стан гри (Playing / Paused / Won / Lost).
     public static event Action<GameState> StateChanged;
 
@@ -24,5 +27,6 @@ public static class GameEvents
     public static void RaiseBaseDestroyed() => BaseDestroyed?.Invoke();
     public static void RaiseAllWavesSpawned() => AllWavesSpawned?.Invoke();
     public static void RaiseWaveStarted(int wave, int total) => WaveStarted?.Invoke(wave, total);
+    public static void RaiseLevelFinished(bool won) => LevelFinished?.Invoke(won);
     public static void RaiseStateChanged(GameState state) => StateChanged?.Invoke(state);
 }

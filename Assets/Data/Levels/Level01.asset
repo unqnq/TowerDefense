@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0770ce826c4384a0ce547699ba29ff, type: 3}
   m_Name: Level01
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  displayName: Meadow
+  sceneName: Level
+  startMoney: 15
+  baseHealth: 100
+  allowedTowers: []
+  twoStarsHealth: 0.5
+  threeStarsHealth: 0.9
   waves:
   - groups:
     - enemy: {fileID: 11400000, guid: 5db16def2d204b69b077b7cfcd1185ff, type: 2}

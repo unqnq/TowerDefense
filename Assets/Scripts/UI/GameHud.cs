@@ -6,7 +6,9 @@ using UnityEngine.UI;
 //  - справа зверху: пауза і перемикач швидкості x1/x2;
 //  - зверху по центру: лічильник хвиль;
 //  - знизу по центру: кнопка "Start" / "Next wave" з відліком і бонусом (видно лише між хвилями);
-//  - екран паузи з кнопками Resume, Restart і перемикачем вібрації.
+//  - під лічильником: активний бустер і скільки секунд йому лишилось;
+//  - екран паузи з кнопками Resume, Restart, Menu і перемикачем вібрації.
+// Також створює екран результату (ResultScreen) і вибір бустера на старті (BoostPicker).
 // Тексти латиницею: поточні шрифти можуть не мати кирилиці.
 public class GameHud : MonoBehaviour
 {
@@ -31,6 +33,10 @@ public class GameHud : MonoBehaviour
     private GameObject hudRoot;
     private TMP_Text speedText;
     private TMP_Text waveText;
+    private TMP_Text boostText;
+    private GameObject toastRoot;
+    private TMP_Text toastText;
+    private float toastHideAt;
     private Button nextWaveButton;
     private TMP_Text nextWaveText;
     private GameObject pausePanel;
@@ -45,10 +51,33 @@ public class GameHud : MonoBehaviour
         BuildUI();
         pausePanel.SetActive(false);
         UpdateSpeedLabel();
+
+        // Окремі вікна з власними Canvas, щоб кожне можна було правити незалежно.
+        gameObject.AddComponent<ResultScreen>().Init(gameManager, font);
+        gameObject.AddComponent<BoostPicker>().Init(gameManager, font);
     }
 
-    private void OnEnable() => GameEvents.StateChanged += OnStateChanged;
-    private void OnDisable() => GameEvents.StateChanged -= OnStateChanged;
+    private void OnEnable()
+    {
+        GameEvents.StateChanged += OnStateChanged;
+        AdsManager.RewardedUnavailable += OnAdUnavailable;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.StateChanged -= OnStateChanged;
+        AdsManager.RewardedUnavailable -= OnAdUnavailable;
+    }
+
+    private void OnAdUnavailable() => ShowToast("Ad is not ready yet. Try again in a moment.");
+
+    // Коротке повідомлення внизу екрана. Реальний час, бо гра може стояти на паузі.
+    public void ShowToast(string message, float seconds = 2.5f)
+    {
+        toastText.text = message;
+        toastRoot.SetActive(true);
+        toastHideAt = Time.unscaledTime + seconds;
+    }
 
     private void OnStateChanged(GameState state)
     {
@@ -59,11 +88,19 @@ public class GameHud : MonoBehaviour
 
     private void Update()
     {
+        if (toastRoot.activeSelf && Time.unscaledTime >= toastHideAt)
+            toastRoot.SetActive(false);
+
         if (spawner == null) return;
 
         int current = spawner.CurrentWave;
         int total = spawner.WaveCount;
-        waveText.text = current == 0 ? "Get ready!" : $"Wave {current}/{total}";
+        string prefix = LevelSession.IsDaily ? "Daily  " : "";
+        waveText.text = prefix + (current == 0 ? "Get ready!" : $"Wave {current}/{total}");
+
+        boostText.text = GameModifiers.TryGetActiveBoost(out BoostCard boost, out float timeLeft)
+            ? $"{boost.DisplayName}  {Mathf.CeilToInt(timeLeft)}s"
+            : "";
 
         bool showNextWave = spawner.IsWaiting && gameManager != null && gameManager.State == GameState.Playing;
         if (nextWaveButton.gameObject.activeSelf != showNextWave)
@@ -142,12 +179,29 @@ public class GameHud : MonoBehaviour
         UiFactory.Anchor(waveRect, new Vector2(0.5f, 1f), new Vector2(0f, -margin));
         waveText = UiFactory.CreateText(waveRect, font, 46f);
 
+        RectTransform boostRect = UiFactory.CreateRect("Boost", hudRoot.transform);
+        boostRect.sizeDelta = new Vector2(520f, 60f);
+        UiFactory.Anchor(boostRect, new Vector2(0.5f, 1f), new Vector2(0f, -margin - 80f));
+        boostText = UiFactory.CreateText(boostRect, font, 34f);
+        boostText.color = new Color(1f, 0.85f, 0.3f, 1f);
+
         // Наступна хвиля — знизу по центру, великою кнопкою під великий палець.
         nextWaveButton = UiFactory.CreateButton("NextWave", hudRoot.transform, nextWaveButtonSize, accentColor,
                                                 OnNextWaveClicked, font, 44f, out _, out nextWaveText);
         UiFactory.Anchor((RectTransform)nextWaveButton.transform, new Vector2(0.5f, 0f),
                          new Vector2(0f, nextWaveBottomOffset));
         nextWaveButton.gameObject.SetActive(false);
+
+        // Повідомлення — над кнопкою Next wave.
+        RectTransform toastRect = UiFactory.CreateRect("Toast", canvas);
+        toastRect.sizeDelta = new Vector2(1000f, 90f);
+        UiFactory.Anchor(toastRect, new Vector2(0.5f, 0f), new Vector2(0f, nextWaveBottomOffset + nextWaveButtonSize.y + 40f));
+        toastRect.gameObject.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.7f);
+        RectTransform toastLabel = UiFactory.CreateRect("Label", toastRect);
+        UiFactory.Stretch(toastLabel);
+        toastText = UiFactory.CreateText(toastLabel, font, 38f);
+        toastRoot = toastRect.gameObject; // ховаємо і показуємо весь блок разом із фоном
+        toastRoot.SetActive(false);
 
         BuildPausePanel(canvas);
     }
@@ -162,23 +216,28 @@ public class GameHud : MonoBehaviour
 
         RectTransform title = UiFactory.CreateRect("Title", panel);
         title.sizeDelta = new Vector2(800f, 140f);
-        UiFactory.Anchor(title, new Vector2(0.5f, 0.5f), new Vector2(0f, 220f));
+        UiFactory.Anchor(title, new Vector2(0.5f, 0.5f), new Vector2(0f, 380f));
         UiFactory.CreateText(title, font, 96f).text = "PAUSED";
 
         Vector2 size = new Vector2(480f, 150f);
         Button resume = UiFactory.CreateButton("Resume", panel, size, accentColor,
                                                () => gameManager.Resume(), font, 52f, out _, out TMP_Text resumeText);
         resumeText.text = "Resume";
-        UiFactory.Anchor((RectTransform)resume.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, 20f));
+        UiFactory.Anchor((RectTransform)resume.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, 180f));
 
         Button restart = UiFactory.CreateButton("Restart", panel, size, buttonColor,
                                                 () => gameManager.Restart(), font, 52f, out _, out TMP_Text restartText);
         restartText.text = "Restart";
-        UiFactory.Anchor((RectTransform)restart.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, -160f));
+        UiFactory.Anchor((RectTransform)restart.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, 0f));
+
+        Button menu = UiFactory.CreateButton("Menu", panel, size, buttonColor,
+                                             () => gameManager.ToMenu(), font, 52f, out _, out TMP_Text menuText);
+        menuText.text = "Menu";
+        UiFactory.Anchor((RectTransform)menu.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, -180f));
 
         Button vibration = UiFactory.CreateButton("Vibration", panel, size, buttonColor,
                                                   OnVibrationClicked, font, 44f, out _, out vibrationText);
-        UiFactory.Anchor((RectTransform)vibration.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, -340f));
+        UiFactory.Anchor((RectTransform)vibration.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, -360f));
         UpdateVibrationLabel();
     }
 }

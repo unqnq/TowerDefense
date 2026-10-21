@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d70ca31861f4d35952b65b4b6e3c7c8, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: Assembly-CSharp::GameConfig
+  menuScene: MainMenu
+  levels:
+  - {fileID: 11400000, guid: cefc08468d2b448d9490f35e24e08ac0, type: 2}
+  - {fileID: 11400000, guid: 87c3133e337341358cd1a27dd22b9024, type: 2}
+  - {fileID: 11400000, guid: ceabeed95811426aa99a5879b72c017e, type: 2}
+  - {fileID: 11400000, guid: c3e20349a8444f9bb46bbf3f7e272550, type: 2}
+  - {fileID: 11400000, guid: 076df13476f84fdeb89f90810804f83c, type: 2}
+  boostCards:
+  - {fileID: 11400000, guid: aac4f9b29d98426493262dd7c945593a, type: 2}
+  - {fileID: 11400000, guid: 174b5accc6124be788df3c74e85f6b4d, type: 2}
+  - {fileID: 11400000, guid: ea26fd3f02c14392909e0fd6c06ae88d, type: 2}
+  - {fileID: 11400000, guid: c0a30fdf192b42f786b636c1cf26b614, type: 2}
+  - {fileID: 11400000, guid: 0983bf24dfa74f9598cf73cdbbe617e8, type: 2}
+  - {fileID: 11400000, guid: 9a0f9d56ed1e418387eca2beb00281c0, type: 2}
+  boostChoices: 3
+  upgrades:
+  - id: start_money
+    displayName: Start money
+    description: '+{0} coins at start'
+    type: 0
+    valuePerRank: 2
+    maxRank: 3
+    costPerRank: 2
+  - id: base_health
+    displayName: Strong base
+    description: '+{0} base HP'
+    type: 1
+    valuePerRank: 0.1
+    maxRank: 3
+    costPerRank: 2
+  - id: tower_damage
+    displayName: Sharp shots
+    description: '+{0} tower damage'
+    type: 2
+    valuePerRank: 0.1
+    maxRank: 3
+    costPerRank: 3
+  - id: tower_range
+    displayName: Long sight
+    description: '+{0} tower range'
+    type: 3
+    valuePerRank: 0.1
+    maxRank: 3
+    costPerRank: 3
+  - id: fire_rate
+    displayName: Quick hands
+    description: '+{0} fire rate'
+    type: 4
+    valuePerRank: 0.1
+    maxRank: 3
+    costPerRank: 3
+  dailyModifiers:
+  - displayName: Speed Run
+    description: Enemies are 50% faster
+    enemyHealth: 1
+    enemySpeed: 1.5
+    startMoney: 1
+    allowedTowers: []
+  - displayName: Tanks
+    description: Enemies have +50% HP, +30% money
+    enemyHealth: 1.5
+    enemySpeed: 1
+    startMoney: 1.3
+    allowedTowers: []
+  - displayName: Poor Start
+    description: Half the start money
+    enemyHealth: 1
+    enemySpeed: 1
+    startMoney: 0.5
+    allowedTowers: []
+  - displayName: Artillery
+    description: Cannon towers only, +50% money
+    enemyHealth: 1
+    enemySpeed: 1
+    startMoney: 1.5
+    allowedTowers:
+    - {fileID: 11400000, guid: 3243903871264d928aea1741f913c732, type: 2}
+  - displayName: Ice Age
+    description: Basic and Frost only, enemies 30% faster
+    enemyHealth: 1
+    enemySpeed: 1.3
+    startMoney: 1
+    allowedTowers:
+    - {fileID: 11400000, guid: ba6eb42778724212bb97214b00f9e92f, type: 2}
+    - {fileID: 11400000, guid: ccede9b11ea1421dba3eabe4332eed7e, type: 2}
+  dailyStarReward: 2
+  interstitialEveryLevels: 3
+  secondLifeHealth: 0.5

@@ -6,6 +6,7 @@ public class Bullet : MonoBehaviour
     // Урон, швидкість і ефекти бере з TowerData вежі, яка вистрілила.
     // Тому одна й та сама куля підходить і звичайній, і гарматній, і крижаній вежі.
     private TowerData data;
+    private float damage;
 
     // Куля летить у будь-що, що можна пошкодити, і не знає конкретних класів.
     private IDamageable target;
@@ -42,10 +43,12 @@ public class Bullet : MonoBehaviour
         return created;
     }
 
-    public void Launch(IDamageable newTarget, TowerData towerData)
+    // damage рахує вежа в момент пострілу: урон з TowerData × покращення × бустери.
+    public void Launch(IDamageable newTarget, TowerData towerData, float shotDamage)
     {
         target = newTarget;
         data = towerData;
+        damage = shotDamage;
         Tint.Apply(gameObject, data.Tint); // кулі з пулу могли бути пофарбовані іншою вежею
     }
 
@@ -103,7 +106,7 @@ public class Bullet : MonoBehaviour
             && component.TryGetComponent(out EnemyMovement movement))
             movement.ApplySlow(data.SlowFactor, data.SlowDuration);
 
-        if (data.Damage > 0) victim.TakeDamage(data.Damage);
+        if (damage > 0f) victim.TakeDamage(damage);
     }
 
     private void Release()

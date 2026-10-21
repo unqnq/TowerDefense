@@ -15,6 +15,13 @@ public class EnemyMovement : MonoBehaviour
     private float slowFactor = 1f;
     private float slowUntil;
 
+    // Ривок (здібність з EnemyData): періодичне прискорення.
+    private float dashEvery;
+    private float dashDuration;
+    private float dashSpeed = 1f;
+    private float dashTimer;
+    private float dashLeft;
+
     public bool IsSlowed => slowFactor < 1f;
 
     // Залишок шляху до бази по NavMesh. Поки шлях ще не пораховано, беремо пряму відстань.
@@ -53,7 +60,11 @@ public class EnemyMovement : MonoBehaviour
         finish = target;
         damage = data.DamageToBase;
         baseSpeed = data.Speed;
-        agent.speed = baseSpeed * slowFactor;
+        dashEvery = data.DashEvery;
+        dashDuration = data.DashDuration;
+        dashSpeed = data.DashSpeed;
+        dashTimer = dashEvery;
+        UpdateSpeed();
     }
 
     // Сповільнення не складається: діє найсильніше, а тривалість продовжується.
@@ -62,16 +73,40 @@ public class EnemyMovement : MonoBehaviour
     {
         if (!IsSlowed || factor < slowFactor) slowFactor = factor;
         slowUntil = Mathf.Max(slowUntil, Time.time + duration);
-        agent.speed = baseSpeed * slowFactor;
+        UpdateSpeed();
     }
 
     private void Update()
     {
-        if (IsSlowed && Time.time >= slowUntil)
+        if (IsSlowed && Time.time >= slowUntil) slowFactor = 1f;
+
+        if (dashEvery > 0f)
         {
-            slowFactor = 1f;
-            agent.speed = baseSpeed;
+            if (dashLeft > 0f)
+            {
+                dashLeft -= Time.deltaTime;
+            }
+            else
+            {
+                dashTimer -= Time.deltaTime;
+                if (dashTimer <= 0f)
+                {
+                    dashLeft = dashDuration;
+                    dashTimer = dashEvery;
+                }
+            }
         }
+
+        UpdateSpeed();
+    }
+
+    // Швидкість рахується щокадру з усіх множників: сповільнення, ривок, бустери і щоденне випробування.
+    // Так закінчення будь-якого ефекту діє одразу, без окремих таймерів.
+    private void UpdateSpeed()
+    {
+        if (agent == null) return;
+        float dash = dashLeft > 0f ? dashSpeed : 1f;
+        agent.speed = baseSpeed * slowFactor * dash * GameModifiers.EnemySpeed;
     }
 
     private void Start()

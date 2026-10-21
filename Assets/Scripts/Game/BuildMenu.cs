@@ -51,6 +51,7 @@ public class BuildMenu : MonoBehaviour
     private TMP_Text sellText;
 
     private BuildCell currentCell;
+    private RangeIndicator rangeIndicator;
     private GameManager gameManager;
     private Camera cam;
 
@@ -66,6 +67,7 @@ public class BuildMenu : MonoBehaviour
 
         BuildUI();
         root.SetActive(false);
+        rangeIndicator = RangeIndicator.Create(transform);
     }
 
     private void OnEnable() => GameEvents.StateChanged += OnStateChanged;
@@ -99,6 +101,7 @@ public class BuildMenu : MonoBehaviour
     {
         currentCell = null;
         if (root != null) root.SetActive(false);
+        if (rangeIndicator != null) rangeIndicator.Hide();
     }
 
     private void LateUpdate()
@@ -157,6 +160,7 @@ public class BuildMenu : MonoBehaviour
         }
 
         titleText.text = $"{turret.Data.DisplayName}  Lv {turret.Level}";
+        rangeIndicator.Show(turret.transform.position, turret.Range); // кожен кадр: бустер дальності може закінчитись
         hintText.text = turret.Data.NextLevel != null
             ? $"Drag onto {turret.Data.DisplayName} Lv {turret.Level} to merge"
             : "MAX level";

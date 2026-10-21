@@ -21,11 +21,43 @@ public class Wave
     [Min(0f)] public float delayAfter = 5f;
 }
 
-// Опис рівня: які хвилі і в якому порядку. Пізніше сюди ж ляжуть стартові гроші, HP бази, пороги зірок.
+// Опис рівня: де він грається, з якими ресурсами, які хвилі і як рахуються зірки.
+// Список і порядок рівнів задає GameConfig (Assets/Resources/GameConfig).
 [CreateAssetMenu(menuName = "Tower Defense/Level", fileName = "Level")]
 public class LevelData : ScriptableObject
 {
+    [Header("Опис")]
+    [Tooltip("Назва на карті рівнів. Латиницею, поки шрифт без кирилиці.")]
+    [SerializeField] private string displayName = "Level";
+    [Tooltip("Сцена з картою цього рівня. Кілька рівнів можуть ділити одну карту з різними хвилями.")]
+    [SerializeField] private string sceneName = "Level";
+
+    [Header("Старт")]
+    [SerializeField, Min(0)] private int startMoney = 15;
+    [SerializeField, Min(1)] private int baseHealth = 100;
+    [Tooltip("Необов'язково. Які вежі доступні на рівні. Порожньо = усі вежі з TurretSpawner.")]
+    [SerializeField] private TowerData[] allowedTowers;
+
+    [Header("Зірки (частка HP бази, що лишилась)")]
+    [Tooltip("1 зірка — будь-яка перемога. 2 зірки — HP бази не менше цієї частки.")]
+    [SerializeField, Range(0f, 1f)] private float twoStarsHealth = 0.5f;
+    [Tooltip("3 зірки — HP бази не менше цієї частки.")]
+    [SerializeField, Range(0f, 1f)] private float threeStarsHealth = 0.9f;
+
+    [Header("Хвилі")]
     [SerializeField] private List<Wave> waves = new List<Wave>();
 
+    public string DisplayName => displayName;
+    public string SceneName => sceneName;
+    public int StartMoney => startMoney;
+    public int BaseHealth => baseHealth;
+    public IReadOnlyList<TowerData> AllowedTowers => allowedTowers;
     public IReadOnlyList<Wave> Waves => waves;
+
+    public int StarsFor(float baseHealthFraction)
+    {
+        if (baseHealthFraction >= threeStarsHealth) return 3;
+        if (baseHealthFraction >= twoStarsHealth) return 2;
+        return 1;
+    }
 }

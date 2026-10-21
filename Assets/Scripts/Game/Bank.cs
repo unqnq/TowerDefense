@@ -12,7 +12,8 @@ public class Bank : MonoBehaviour
 
     void Awake()
     {
-        money = startMoney;
+        // Стартові гроші з рівня + покращення з дерева; startMoney — запасне значення без GameConfig.
+        money = LevelSession.StartMoney(startMoney);
         if (moneyText == null)
             Debug.LogError("[Bank] Не призначено Money Text в інспекторі.", this);
         UpdateUI();

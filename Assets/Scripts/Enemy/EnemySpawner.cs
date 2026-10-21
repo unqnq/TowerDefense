@@ -5,7 +5,7 @@ using UnityEngine;
 // Між хвилями гравець може викликати наступну раніше і отримати бонус за кожну пропущену секунду.
 public class EnemySpawner : MonoBehaviour
 {
-    [Tooltip("Опис хвиль цього рівня.")]
+    [Tooltip("Запасний рівень, якщо GameConfig порожній. Зазвичай рівень береться з LevelSession (обраний на карті).")]
     [SerializeField] private LevelData level;
     [Tooltip("База, до якої йтимуть вороги.")]
     [SerializeField] private Finish finish;
@@ -32,6 +32,7 @@ public class EnemySpawner : MonoBehaviour
     private void Awake()
     {
         bank = FindAnyObjectByType<Bank>();
+        if (LevelSession.Level != null) level = LevelSession.Level;
     }
 
     private void Start()

@@ -61,6 +61,40 @@ public static class UiFactory
         return text;
     }
 
+    // Зірки малюються ромбами з простих Image: шрифт може не мати символу ★, а окремий спрайт не потрібен.
+    public static Image[] CreateStars(Transform parent, float size, float spacing, Vector2 offset)
+    {
+        var stars = new Image[3];
+        for (int i = 0; i < 3; i++)
+        {
+            RectTransform rect = CreateRect("Star" + (i + 1), parent);
+            rect.sizeDelta = Vector2.one * size;
+            Anchor(rect, new Vector2(0.5f, 0.5f), offset + new Vector2((i - 1) * (size + spacing), 0f));
+            rect.localRotation = Quaternion.Euler(0f, 0f, 45f);
+            stars[i] = rect.gameObject.AddComponent<Image>();
+            stars[i].raycastTarget = false;
+        }
+        return stars;
+    }
+
+    public static readonly Color StarOn = new Color(1f, 0.82f, 0.2f, 1f);
+    public static readonly Color StarOff = new Color(1f, 1f, 1f, 0.2f);
+
+    public static void SetStars(Image[] stars, int count)
+    {
+        for (int i = 0; i < stars.Length; i++)
+            stars[i].color = i < count ? StarOn : StarOff;
+    }
+
+    // Затемнення на весь екран, яке блокує тапи по грі під ним.
+    public static RectTransform CreateOverlay(string name, Transform parent, Color color)
+    {
+        RectTransform overlay = CreateRect(name, parent);
+        Stretch(overlay);
+        overlay.gameObject.AddComponent<Image>().color = color;
+        return overlay;
+    }
+
     public static Button CreateButton(string name, Transform parent, Vector2 size, Color color,
                                       UnityAction onClick, TMP_FontAsset font, float fontSize,
                                       out Image image, out TMP_Text text)
