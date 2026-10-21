@@ -106,7 +106,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         // Повідомляємо про вбивство. Гроші нарахує банк, бо він підписаний на цю подію.
         // Бустер "монети за вбивство" множить нагороду саме в момент смерті.
-        GameEvents.RaiseEnemyKilled(Mathf.RoundToInt(reward * GameModifiers.CoinReward));
+        int coins = Mathf.RoundToInt(reward * GameModifiers.CoinReward);
+        GameEvents.RaiseEnemyKilled(coins);
+        GameEvents.RaiseCoinsDropped(transform.position, coins);
         Destroy(gameObject, destroyDelay);
     }
 }

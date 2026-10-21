@@ -10,6 +10,9 @@ public class Bank : MonoBehaviour
     private int money;
     public int Money => money;
 
+    // Куди летять монети з убитих ворогів, якщо в сцені немає іконки MoneyImage.
+    public RectTransform MoneyLabel => moneyText != null ? moneyText.rectTransform : null;
+
     void Awake()
     {
         // Стартові гроші з рівня + покращення з дерева; startMoney — запасне значення без GameConfig.

@@ -19,8 +19,11 @@ public class GameHud : MonoBehaviour
 
     [Header("Розташування (у пікселях при 1080x1920)")]
     [Tooltip("Відступ від країв екрана. Збільште, якщо HUD перекриває інші елементи або виріз камери.")]
-    [SerializeField] private float margin = 40f;
-    [SerializeField] private float smallButtonSize = 130f;
+    [SerializeField] private float margin = 30f;
+    [Tooltip("Відступ верхнього ряду (лічильник хвиль, пауза, x2) від верху екрана. " +
+             "Має бути нижче смуги HP бази, щоб нічого не накладалося.")]
+    [SerializeField] private float topOffset = 115f;
+    [SerializeField] private float smallButtonSize = 110f;
     [SerializeField] private Vector2 nextWaveButtonSize = new Vector2(420f, 150f);
     [Tooltip("Наскільки кнопка Next wave піднята від низу екрана.")]
     [SerializeField] private float nextWaveBottomOffset = 60f;
@@ -55,6 +58,7 @@ public class GameHud : MonoBehaviour
         // Окремі вікна з власними Canvas, щоб кожне можна було правити незалежно.
         gameObject.AddComponent<ResultScreen>().Init(gameManager, font);
         gameObject.AddComponent<BoostPicker>().Init(gameManager, font);
+        gameObject.AddComponent<CoinFlyEffect>();
     }
 
     private void OnEnable()
@@ -163,26 +167,32 @@ public class GameHud : MonoBehaviour
 
         // Пауза — у правому верхньому куті.
         Button pause = UiFactory.CreateButton("Pause", hudRoot.transform, small, buttonColor,
-                                              OnPauseClicked, font, 52f, out _, out TMP_Text pauseText);
+                                              OnPauseClicked, font, 46f, out _, out TMP_Text pauseText);
         pauseText.text = "II";
-        UiFactory.Anchor((RectTransform)pause.transform, new Vector2(1f, 1f), new Vector2(-margin, -margin));
+        UiFactory.Anchor((RectTransform)pause.transform, new Vector2(1f, 1f), new Vector2(-margin, -topOffset));
 
         // Швидкість — ліворуч від паузи.
         Button speed = UiFactory.CreateButton("Speed", hudRoot.transform, small, buttonColor,
-                                              OnSpeedClicked, font, 44f, out _, out speedText);
+                                              OnSpeedClicked, font, 40f, out _, out speedText);
         UiFactory.Anchor((RectTransform)speed.transform, new Vector2(1f, 1f),
-                         new Vector2(-margin - smallButtonSize - 20f, -margin));
+                         new Vector2(-margin - smallButtonSize - 16f, -topOffset));
 
         // Лічильник хвиль — зверху по центру.
         RectTransform waveRect = UiFactory.CreateRect("Wave", hudRoot.transform);
-        waveRect.sizeDelta = new Vector2(420f, 80f);
-        UiFactory.Anchor(waveRect, new Vector2(0.5f, 1f), new Vector2(0f, -margin));
-        waveText = UiFactory.CreateText(waveRect, font, 46f);
+        waveRect.sizeDelta = new Vector2(340f, 70f);
+        UiFactory.Anchor(waveRect, new Vector2(0.5f, 1f), new Vector2(0f, -topOffset));
+        waveText = UiFactory.CreateText(waveRect, font, 44f);
+        waveText.enableAutoSizing = true;
+        waveText.fontSizeMin = 26f;
+        waveText.fontSizeMax = 44f;
 
         RectTransform boostRect = UiFactory.CreateRect("Boost", hudRoot.transform);
-        boostRect.sizeDelta = new Vector2(520f, 60f);
-        UiFactory.Anchor(boostRect, new Vector2(0.5f, 1f), new Vector2(0f, -margin - 80f));
+        boostRect.sizeDelta = new Vector2(340f, 55f);
+        UiFactory.Anchor(boostRect, new Vector2(0.5f, 1f), new Vector2(0f, -topOffset - 75f));
         boostText = UiFactory.CreateText(boostRect, font, 34f);
+        boostText.enableAutoSizing = true;
+        boostText.fontSizeMin = 22f;
+        boostText.fontSizeMax = 34f;
         boostText.color = new Color(1f, 0.85f, 0.3f, 1f);
 
         // Наступна хвиля — знизу по центру, великою кнопкою під великий палець.
